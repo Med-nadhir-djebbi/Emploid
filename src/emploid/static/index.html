@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emploid</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a66c2'/%3E%3Cg fill='none' stroke='white' stroke-width='2.2' stroke-linejoin='round' stroke-linecap='round'%3E%3Crect x='6' y='11' width='20' height='14' rx='2.5'/%3E%3Cpath d='M12 11V9.5A1.5 1.5 0 0 1 13.5 8h5A1.5 1.5 0 0 1 20 9.5V11M6 17h20'/%3E%3C/g%3E%3C/svg%3E">
+<script>
+  try {  /* apply saved look before first paint */
+    var d = document.documentElement, a = localStorage.getItem("js-accent"), t = localStorage.getItem("js-theme") || "system";
+    if (a) d.dataset.accent = a;
+    if (sessionStorage.getItem("js-welcomed")) d.classList.add("no-welcome");
+    if (t === "dark" || (t === "system" && matchMedia("(prefers-color-scheme: dark)").matches)) d.dataset.theme = "dark";
+  } catch (e) {}
+</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="welcome" class="welcome" role="dialog" aria-label="Welcome">
+  <h1 id="welcome-title">Welcome</h1>
+  <p id="welcome-sub"></p>
+</div>
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><rect x="4" y="10" width="24" height="16" rx="3"/><path d="M11 10V8.5A2.5 2.5 0 0 1 13.5 6h5A2.5 2.5 0 0 1 21 8.5V10M4 17h24"/></svg>
+      Emploid
+    </div>
+    <nav id="tabs" class="tabs">
+      <button data-tab="results" class="on">Results <span class="n" id="n-results">0</span></button>
+      <button data-tab="saved">Saved <span class="n" id="n-saved">0</span></button>
+      <button data-tab="applied">Applied <span class="n" id="n-applied">0</span></button>
+      <button data-tab="dismissed">Dismissed <span class="n" id="n-dismissed">0</span></button>
+    </nav>
+    <div class="spacer"></div>
+    <div class="me">
+      <button class="avatar" id="avatar" title="Profile" aria-label="Profile"></button>
+      <button class="link" id="open-shortcuts" title="Keyboard shortcuts">Shortcuts</button>
+      <button class="link" id="open-profile">Profile</button>
+      <button class="link" id="open-settings">Settings</button>
+    </div>
+  </div>
+  <div class="topline" id="topline"><i id="topline-bar"></i></div>
+</header>
+
+<section class="hello">
+  <h1 id="hello-title">Welcome</h1>
+  <p id="hello-sub"></p>
+</section>
+
+<main class="layout">
+  <aside class="card filters" id="filters">
+    <div id="presets-box" class="hidden">
+      <h2>Presets</h2>
+      <ul id="presets" class="presets"></ul>
+    </div>
+    <h2 id="search-title">Search</h2>
+    <label for="f-query">Specialization or keywords</label>
+    <textarea id="f-query" rows="2" placeholder="e.g. software engineering at Google, data science"></textarea>
+    <div class="hint">Separate several with commas. A company name can go in the text ("backend at Stripe") or in the field below.</div>
+
+    <label for="f-companies">Company (optional)</label>
+    <input id="f-companies" type="text" placeholder="e.g. Google, Amazon">
+    <div id="interpreted" class="interpreted hidden"></div>
+
+    <fieldset>
+      <legend>Job type</legend>
+      <label class="check"><input type="checkbox" name="type" value="internship"> Internship</label>
+      <label class="check"><input type="checkbox" name="type" value="part_time"> Part-time</label>
+      <label class="check"><input type="checkbox" name="type" value="full_time"> Full-time</label>
+      <label class="check"><input type="checkbox" name="type" value="freelance"> Freelance / contract</label>
+    </fieldset>
+
+    <fieldset id="start-box">
+      <legend>Internship start</legend>
+      <select id="f-season" aria-label="Start season">
+        <option value="">Any season</option>
+        <option value="summer">Summer</option>
+        <option value="fall">Fall</option>
+        <option value="winter">Winter</option>
+        <option value="spring">Spring</option>
+      </select>
+      <select id="f-year" aria-label="Start year" style="margin-top:6px">
+        <option value="0">Any year</option>
+        <option value="2026">2026</option>
+        <option value="2027">2027</option>
+        <option value="2028">2028</option>
+      </select>
+      <label class="check" style="margin-top:6px"><input type="checkbox" id="f-require"> Only if the start is stated</label>
+    </fieldset>
+
+    <label>Where</label>
+    <button type="button" class="btn block-btn" id="where-btn">Choose countries on a map</button>
+    <div id="where-chips" class="where-chips"></div>
+    <label for="f-location" class="sublabel">City or area (optional)</label>
+    <input id="f-location" type="text" placeholder="e.g. Berlin, Bavaria">
+
+    <label for="f-remote">Work mode</label>
+    <select id="f-remote">
+      <option value="any">Remote and on-site</option>
+      <option value="only">Remote only</option>
+      <option value="office">On-site / hybrid only</option>
+    </select>
+
+    <label for="f-days">Posted</label>
+    <select id="f-days">
+      <option value="0">Any time</option>
+      <option value="3">Past 3 days</option>
+      <option value="7">Past week</option>
+      <option value="30">Past month</option>
+    </select>
+
+    <label for="f-visa">Visa fit</label>
+    <select id="f-visa">
+      <option value="all">Show everything</option>
+      <option value="hide_blocked">Hide jobs that rule me out</option>
+      <option value="offered">Only visa or relocation support</option>
+    </select>
+    <div class="hint">Read from the posting text: a signal, not a guarantee.</div>
+
+    <label for="f-exclude">Words to exclude</label>
+    <input id="f-exclude" type="text" placeholder="e.g. senior, sales">
+    <label class="check" style="margin-top:6px"><input type="checkbox" id="f-phd"> Hide PhD-only roles</label>
+
+    <button class="btn primary block" id="search-btn">Search</button>
+    <button class="btn block gray" id="save-preset-btn" style="margin-top:8px">Save as preset</button>
+    <form id="save-preset-form" class="preset-form hidden">
+      <input id="preset-name" type="text" placeholder="Preset name, e.g. Summer SWE interns" maxlength="60" aria-label="Preset name">
+      <div class="preset-form-row">
+        <button type="submit" class="btn primary sm">Save</button>
+        <button type="button" class="btn sm" id="preset-cancel">Cancel</button>
+      </div>
+    </form>
+    <div id="run-status" class="run-status"></div>
+  </aside>
+
+  <section class="card list-col">
+    <div class="list-head">
+      <div id="list-title" class="list-title"></div>
+      <div class="list-tools">
+        <input id="filter-text" type="search" placeholder="Filter these results">
+        <div class="menu-wrap">
+          <button class="btn sm" id="select-menu-btn" aria-haspopup="true">Select ▾</button>
+          <div class="menu hidden" id="select-menu" role="menu"></div>
+        </div>
+      </div>
+    </div>
+    <div class="list-tools2">
+      <select id="sort-by" aria-label="Sort">
+        <option value="best">Best match</option>
+        <option value="newest">Newest</option>
+        <option value="start">Soonest start</option>
+        <option value="company">Company A to Z</option>
+      </select>
+      <div id="chips" class="chips"></div>
+      <a id="export-csv" class="link hidden" href="/api/export/applied.csv" download>Export CSV</a>
+    </div>
+    <div id="bulk" class="bulk hidden">
+      <label class="check"><input type="checkbox" id="select-all"> <span id="sel-count"></span></label>
+      <span class="spacer"></span>
+      <button class="btn primary sm" id="bulk-apply">Apply</button>
+      <button class="btn sm" id="bulk-save">Save</button>
+      <button class="btn sm" id="bulk-dismiss">Dismiss</button>
+    </div>
+    <ul id="list" class="list"></ul>
+  </section>
+
+  <section class="card detail" id="detail"></section>
+</main>
+
+<div id="modal" class="modal hidden"><div class="modal-box" id="modal-box"></div></div>
+<div id="toast" class="toast hidden"></div>
+<script src="app.js"></script>
+</body>
+</html>
